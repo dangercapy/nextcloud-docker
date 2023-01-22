@@ -43,8 +43,8 @@ services:
       - MYSQL_USER=
       - MYSQL_HOST=db
       - OVERWRITEPROTOCOL=https
-      - PHP_UPLOAD_LIMIT=8G
-      - PHP_MEMORY_LIMIT=8G
+      - PHP_UPLOAD_LIMIT=16G
+      - PHP_MEMORY_LIMIT=16G
 
     # This container does the cronjobs for the nextcloud instance.
 
