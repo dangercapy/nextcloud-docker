@@ -4,7 +4,9 @@ volumes:
   nextcloud:
   db:
 
-
+networks:
+  nextcloud_network:
+    external: false
 
 services:
 
@@ -16,14 +18,15 @@ services:
     image: mariadb:10.5
     restart: always
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    networks:
+      - nextcloud_network
     volumes:
       - db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=
       - MYSQL_PASSWORD=
-      - MYSQL_DATABASE=
+      - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=
-
 
 
     #This is the main nextcloud container, used behind a reverse proxy, which encrypts traffic via SSL certificates.
@@ -33,25 +36,26 @@ services:
     restart: always
     ports:
       - 8080:80
+    networks:
+      - nextcloud_network
     links:
       - db
     volumes:
       - nextcloud:/var/www/html
     environment:
       - MYSQL_PASSWORD=
-      - MYSQL_DATABASE=
+      - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=
       - MYSQL_HOST=db
       - OVERWRITEPROTOCOL=https
-      - PHP_UPLOAD_LIMIT=16G
-      - PHP_MEMORY_LIMIT=16G
+      - PHP_UPLOAD_LIMIT=2G
+      - PHP_MEMORY_LIMIT=2G
 
     # This container does the cronjobs for the nextcloud instance.
 
   cron:
     image: rcdailey/nextcloud-cronjob
     restart: always
-    network_mode: none
     depends_on:
     - app
     volumes:
@@ -60,3 +64,16 @@ services:
     environment:
     - NEXTCLOUD_CONTAINER_NAME=app
     - NEXTCLOUD_PROJECT_NAME=nextcloud
+    networks:
+      - nextcloud_network
+
+# This is the Redis container.
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - /docker/nextcloud/redis:/data
+    networks:
+      - nextcloud_network
+    restart: always
