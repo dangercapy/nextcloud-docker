@@ -45,9 +45,10 @@ app:
   links:
     - db
 
-    #Change the /mnt/nextcloud to your preferred location of storage.
+  #Change the /mnt/nextcloud to your preferred location of storage.
   volumes:
     - /mnt/nextcloud:/var/www/html
+
   environment:
 
     # Enter your DB information over here, it is recommended (for security reasons) to not use the default "nextcloud" user.
