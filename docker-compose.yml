@@ -1,3 +1,8 @@
+# README!!!
+#Please change nc to the folder name in which your docker-compose is stored.
+#If you do not do this it will not work properly.
+#Also use this docker-compose file at your own risk.
+
 version: '2'
 
 volumes:
@@ -6,105 +11,105 @@ volumes:
 
 networks:
   nextcloud_network:
-  external: false
+    external: false
 
 services:
 
-# This is the database container.
+  # This is the database container.
 
-db:
-  image: mariadb:10.5
-  container_name: nc_db
-  restart: always
-  command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
-  networks:
-    - nextcloud_network
-  volumes:
-    - db:/var/lib/mysql
-  environment:
+  db:
+    image: mariadb:10.5
+    container_name: nc_db
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    networks:
+      - nextcloud_network
+    volumes:
+      - db:/var/lib/mysql
+    environment:
 
-    # Make sure you enter the same username and passwords here as in the app..
-    - MYSQL_ROOT_PASSWORD=
-    - MYSQL_PASSWORD=
-    - MYSQL_DATABASE=nextcloud
-    - MYSQL_USER=
+      # Make sure you enter the same username and passwords here as in the app..
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=
 
-#This is the main nextcloud container, used behind a reverse proxy, which encrypts traffic via SSL certificates.
+  #This is the main nextcloud container, used behind a reverse proxy, which encrypts traffic via SSL certificates.
 
-app:
-  image: nextcloud
-  container_name: nc_app
-  restart: always
-  ports:
+  app:
+    image: nextcloud
+    container_name: nc_app
+    restart: always
+    ports:
 
-    # Change 8080 to any port of your liking, it is also possible to change this to port 80 to access it directly from the IP of the host.
-    - 8080:80
+      # Change 8080 to any port of your liking, it is also possible to change this to port 80 to access it directly from the IP of the host.
+      - 8080:80
 
-  networks:
-    - nextcloud_network
-  links:
-    - db
+    networks:
+      - nextcloud_network
+    links:
+      - db
 
-  #Change the /mnt/nextcloud to your preferred location of storage.
-  volumes:
-    - /mnt/nextcloud:/var/www/html
+    #Change the /mnt/nextcloud to your preferred location of storage.
+    volumes:
+      - /mnt/nextcloud:/var/www/html
 
-  environment:
+    environment:
 
-    # Enter your DB information over here, it is recommended (for security reasons) to not use the default "nextcloud" user.
-    - MYSQL_PASSWORD=
-    - MYSQL_DATABASE=nextcloud
-    - MYSQL_USER=
-    - MYSQL_HOST=db
+      # Enter your DB information over here, it is recommended (for security reasons) to not use the default "nextcloud" user.
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=
+      - MYSQL_HOST=db
 
-    # Here you can enter the settings for your Administrator account in nextcloud. Make sure to set a propper password, as this user will have all permissions within your instance.
-    - NEXTCLOUD_ADMIN_USER=
-    - NEXTCLOUD_ADMIN_PASSWORD=
-    - NEXTCLOUD_TRUSTED_DOMAINS=
+      # Here you can enter the settings for your Administrator account in nextcloud. Make sure to set a propper password, as this user will have all permissions within your instance.
+      - NEXTCLOUD_ADMIN_USER=
+      - NEXTCLOUD_ADMIN_PASSWORD=
+      - NEXTCLOUD_TRUSTED_DOMAINS=
 
-    # This tells the container where to find redis.
-    - REDIS_HOST=nc_redis
+      # This tells the container where to find redis.
+      - REDIS_HOST=nc_redis
 
-    # Here you can enter your mail server information, if you dont have a mail server you can create one yourself, or use a service like Sendgrid.
-    - SMTP_HOST=
-    - SMTP_SECURE=
-    - SMTP_PORT=
-    - SMTP_AUTHTYPE=
-    - SMTP_NAME=
-    - SMTP_PASSWORD=
-    - MAIL_FROM_ADDRESS=
+      # Here you can enter your mail server information, if you dont have a mail server you can create one yourself, or use a service like Sendgrid.
+      - SMTP_HOST=
+      - SMTP_SECURE=
+      - SMTP_PORT=
+      - SMTP_AUTHTYPE=
+      - SMTP_NAME=
+      - SMTP_PASSWORD=
+      - MAIL_FROM_ADDRESS=
 
-    # This sets the only accepted protocol to HTTPS.
-    - OVERWRITEPROTOCOL=https
+      # This sets the only accepted protocol to HTTPS.
+      - OVERWRITEPROTOCOL=https
 
-    # Change these values to a "Max file size".
-    - PHP_UPLOAD_LIMIT=2G
-    - PHP_MEMORY_LIMIT=2G
+      # Change these values to a "Max file size".
+      - PHP_UPLOAD_LIMIT=2G
+      - PHP_MEMORY_LIMIT=2G
 
-# This container does the cronjobs for the nextcloud instance.
+  # This container does the cronjobs for the nextcloud instance.
 
-cron:
-  image: rcdailey/nextcloud-cronjob
-  restart: always
-  container_name: nc_cron
-  depends_on:
-    - app
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock:ro
-    - /etc/localtime:/etc/localtime:ro
-  environment:
-    - NEXTCLOUD_CONTAINER_NAME=app
-    - NEXTCLOUD_PROJECT_NAME=nextcloud
-  networks:
-    - nextcloud_network
+  cron:
+    image: rcdailey/nextcloud-cronjob
+    restart: always
+    container_name: nc_cron
+    depends_on:
+      - app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NEXTCLOUD_CONTAINER_NAME=app
+      - NEXTCLOUD_PROJECT_NAME=nc
+    networks:
+      - nextcloud_network
 
-# This is the Redis container.
+  # This is the Redis container.
 
-redis:
-  image: redis:alpine
-  container_name: nc_redis
-  volumes:
-    - /docker/nextcloud/redis:/data
-  networks:
-    - nextcloud_network
-  restart: always
+  redis:
+    image: redis:alpine
+    container_name: nc_redis
+    volumes:
+      - /docker/nextcloud/redis:/data
+    networks:
+      - nextcloud_network
+    restart: always
