@@ -1,15 +1,17 @@
-# nextcloud-docker
+This is my self-made Nextcloud Docker instance.
 
-This is my nextcloud installation,
+This currently supports an almost complete setup just from the compose file itself. It is recommended to run this behind an NGINX reverse proxy, to use SSL on the site.
 
-I run Nextcloud on a docker container, while nginx is running on the main system.
+An example configuration for this can be found at ./nextcloud.conf.
 
-The nginx.conf is located in /etc/nginx/sites-available/sitename
+You should edit a lot of things in the docker compose file before starting the container! If you don't do this you'll make it harder for yourself to get started.
 
-The docker-compose is located in the home directory of my nextcloud user:
+For Environment variables I recommend following:
+https://hub.docker.com/_/nextcloud/
 
-/home/nextcloud/nextcloud/docker-compose.yml
+Sources:
+https://hub.docker.com/_/mariadb
+https://hub.docker.com/_/nextcloud/
+https://github.com/rcdailey/nextcloud-cronjob
+https://hub.docker.com/_/redis
 
-Make sure your nextcloud user has docker rights!
-
-Also make sure you have installed certbot for SSL encryption.
