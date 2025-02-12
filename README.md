@@ -60,6 +60,12 @@ The option here is only important if you use a domain name! If you don't know wh
 ```
  # - NEXTCLOUD_TRUSTED_DOMAINS=
 ```
+Now for the path where nextcloud will be installed:
+```
+    volumes:
+      - nextcloud:/var/www/html
+```
+You can change nextcloud to the path you want to use, like /mnt/nextcloud:/var/www/html.
 
 If you use a mail server/service like sendgrid you can fill in the underneath, else comment it out like we did with the above option.
 
