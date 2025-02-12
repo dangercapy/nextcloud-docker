@@ -73,6 +73,7 @@ SETUP GUIDE (for beginners):
 
 	Now you are reading what the machine does live, make sure everything starts, and open your webbrowser, navigate to the ip/url you use for NextCloud! You should now be able to login to your created administator account.
 	If you receive any errors, follow nextcloud's original docs.
+	If everything works, press ctrl + c, and start the container using the daemon by running: docker-compose up -d.
 
 For Environment variables I recommend following: https://hub.docker.com/_/nextcloud/
 
